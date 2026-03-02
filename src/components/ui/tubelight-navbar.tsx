@@ -73,17 +73,17 @@ export function TubelightNavbar() {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="fixed top-0 left-1/2 -translate-x-1/2 z-[100] mt-6 w-full max-w-[90vw] md:max-w-max flex justify-center"
         >
-          <div className="flex items-center gap-1 md:gap-3 bg-[#0F232E]/70 border border-[#D8D8D5]/10 backdrop-blur-md py-1.5 px-2 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
+          <div className="flex items-center gap-1 md:gap-3 bg-[#0F232E]/70 border border-[#0F232E]/20 backdrop-blur-md py-1 px-4 md:px-1 rounded-full shadow-lg mx-4 md:mx-0">
             {navItems.map((item) => {
               const Icon = item.icon
               const isActive = activeSegment === item.name
+              const isHome = item.name === 'YieldWalker';
 
               return (
-                <Link
+                <a
                   key={item.name}
                   href={item.url}
                   onClick={(e) => {
-                    // Smooth scroll
                     e.preventDefault()
                     const element = document.querySelector(item.url)
                     if (element) {
@@ -93,7 +93,8 @@ export function TubelightNavbar() {
                   className={cn(
                     "relative cursor-pointer text-xs md:text-sm font-semibold px-4 md:px-6 py-2 rounded-full transition-all duration-300",
                     "text-[#D8D8D5] hover:text-[#D8D8D5]/80",
-                    isActive && "text-white"
+                    isActive && "text-white",
+                    isHome && "hidden md:inline-block"
                   )}
                   style={{ fontFamily: "'Google Sans Flex', system-ui, sans-serif" }}
                 >
@@ -119,7 +120,7 @@ export function TubelightNavbar() {
                       </div>
                     </motion.div>
                   )}
-                </Link>
+                </a>
               )
             })}
           </div>

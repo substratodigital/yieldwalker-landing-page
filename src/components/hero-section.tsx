@@ -12,7 +12,7 @@ const TOTAL_FRAMES = 298;
 function getFrameSrc(index: number, isMobile: boolean): string {
     const safeIndex = Math.max(0, Math.min(index, TOTAL_FRAMES - 1));
     const numString = String(safeIndex + 1).padStart(3, "0");
-    const folder = isMobile ? "hero-mobile" : "hero_animacao";
+    const folder = isMobile ? "hero-mobile-1080x1920" : "hero_animacao";
     return `/assets/${folder}/ezgif-frame-${numString}.jpg`;
 }
 
@@ -272,7 +272,7 @@ export function HeroSection() {
 
                 {/* === CAMADA 4: CHALLENGE OVERLAY (CARDS) === */}
                 <motion.div
-                    className="absolute inset-0 z-20 flex flex-col justify-center items-center px-6 w-full"
+                    className="absolute inset-0 z-20 flex flex-col justify-start md:justify-center items-center px-6 w-full overflow-y-auto md:overflow-hidden pb-20 md:pb-0 pt-[15vh] md:pt-0"
                     style={{ opacity: challengeOpacity, y: challengeY, pointerEvents: challengePointerEvents }}
                 >
                     {/* DOT PATTERN OVERLAY FOR CHALLENGE */}
@@ -300,7 +300,7 @@ export function HeroSection() {
                         </div>
 
                         {/* Cards de Fricção em Glassmorphism Premium C/ Ajuste Mobile P/ Nao cortar */}
-                        <div className="xl:w-2/3 flex flex-row overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 gap-6 w-full pb-8 md:pb-0 px-4 md:px-0">
+                        <div className="xl:w-2/3 flex flex-col md:grid md:grid-cols-3 gap-6 w-full pb-12 md:pb-0 mt-4 md:mt-0">
                             {[
                                 { title: "The Labor Gap", text: "Skilled field labor is increasingly scarce as younger generations migrate toward urban centers." },
                                 { title: "Data Subjectivity", text: "Human assessments are inherently subjective, leading to inconsistent field data and compromised decision-making." },
@@ -310,7 +310,7 @@ export function HeroSection() {
                                     key={i}
                                     whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.6)", scale: 1.02 }}
                                     transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                                    className="bg-[#161616]/60 backdrop-blur-xl border border-white/5 shadow-2xl p-6 md:p-8 rounded-[32px] flex flex-col gap-3 md:gap-4 min-w-[85vw] md:min-w-0 snap-center"
+                                    className="bg-[#161616]/60 backdrop-blur-xl border border-white/5 shadow-2xl p-6 md:p-8 rounded-[32px] flex flex-col gap-3 md:gap-4 shrink-0"
                                 >
                                     <div className="w-14 h-14 rounded-full border border-[#FF5532]/30 bg-[#FF5532]/10 flex items-center justify-center mb-2">
                                         <span className="font-mono text-[#FF5532] text-xl font-bold">0{i + 1}</span>

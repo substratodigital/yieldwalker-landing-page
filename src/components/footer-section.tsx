@@ -3,17 +3,27 @@
 import { motion } from "framer-motion";
 import { DotPattern } from "@/components/ui/dot-pattern";
 import { ArrowUpRight } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export function FooterSection() {
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
+
     return (
         <section id="contact" className="relative w-full min-h-[100vh] bg-[#E5E5E5] flex flex-col items-center justify-between overflow-hidden">
 
             {/* BACKGROUND IMAGE - ROBOT */}
             <div className="absolute inset-0 w-full h-full flex items-center justify-center top-0">
                 <img
-                    src="/assets/robo_cima.webp"
+                    src={isMobile ? "/assets/robo-mobile.webp" : "/assets/robo_cima.webp"}
                     alt="YieldWalker Robot Above View"
-                    className="w-full h-auto object-cover md:object-contain object-top md:object-center opacity-90 scale-110"
+                    className="w-full h-auto object-cover md:object-contain object-top md:object-center opacity-90 scale-110 md:scale-100"
                 />
             </div>
 
@@ -57,10 +67,10 @@ export function FooterSection() {
                     {/* CTA Box */}
                     <a
                         href="mailto:miguel@yieldwalker.com"
-                        className="group relative inline-flex items-center gap-3 px-8 py-4 bg-[#FF5532] text-white rounded-full font-mono font-bold text-lg hover:bg-white hover:text-[#0F232E] transition-all duration-300 shadow-[0_10px_40px_rgba(255,85,50,0.4)] hover:shadow-[0_15px_50px_rgba(255,255,255,0.3)] mt-2"
+                        className="group relative inline-flex items-center gap-2 md:gap-3 px-6 md:px-8 py-3 md:py-4 bg-[#FF5532] text-white rounded-full font-mono font-bold text-sm md:text-lg hover:bg-white hover:text-[#0F232E] transition-all duration-300 shadow-[0_10px_40px_rgba(255,85,50,0.4)] hover:shadow-[0_15px_50px_rgba(255,255,255,0.3)] mt-2"
                     >
                         <span>Partner with YieldWalker</span>
-                        <ArrowUpRight className="w-6 h-6 group-hover:rotate-45 transition-transform duration-300" />
+                        <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6 group-hover:rotate-45 transition-transform duration-300" />
                     </a>
 
                     {/* ECOSYSTEM LOGOS */}
