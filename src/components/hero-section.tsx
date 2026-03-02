@@ -121,14 +121,35 @@ export function HeroSection() {
         imagesRef.current = imgs;
     }, [prefersReducedMotion, isMobile]);
 
-    // Função pura para renderizar imagem no canvas
+    // Função pura para renderizar imagem no canvas sem achatar/distorcer
     function renderFrame(index: number, imgs: HTMLImageElement[], canvas: HTMLCanvasElement) {
-        if (!imgs[index]) return; // Evita falhas se a imagem ainda não carregou
+        if (!imgs[index]) return;
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // As imagens parecem ter aspecto wide, cobrindo o canvas
-        ctx.drawImage(imgs[index], 0, 0, canvas.width, canvas.height);
+
+        const img = imgs[index];
+        const canvasRatio = canvas.width / canvas.height;
+        const imgRatio = img.width / img.height;
+
+        let drawWidth = canvas.width;
+        let drawHeight = canvas.height;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        // Lógica CSS "object-cover" recriada nativamente no Canvas (cobre a tela sem distorcer)
+        if (canvasRatio > imgRatio) {
+            // Tela é mais larga que a proporção da imagem: ajusta a largura na base
+            drawHeight = drawWidth / imgRatio;
+            offsetY = (canvas.height - drawHeight) / 2;
+        } else {
+            // Tela é mais estreita (ou alta) que a proporção da imagem: ajusta a altura na base
+            drawWidth = drawHeight * imgRatio;
+            offsetX = (canvas.width - drawWidth) / 2;
+        }
+
+        ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
     }
 
     // 2. ESCUTAR MUDANÇAS DO FRAME E ATUALIZAR CANVAS
@@ -154,10 +175,14 @@ export function HeroSection() {
             <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-center">
 
                 {/* === CAMADA 1: VÍDEO NO CANVAS === */}
+                {/* 
+                  Redefinimos tamanhos lógicos caso seja mobile para um baseline portait (ex: 1080x1920),
+                  e no Desktop mantemos 1920x1080. O CSS object-cover/canvas drawImage cuida do fit na tela física real.
+                */}
                 <motion.canvas
                     ref={canvasRef}
-                    width={1920}
-                    height={1080}
+                    width={isMobile ? 1080 : 1920}
+                    height={isMobile ? 1920 : 1080}
                     className="absolute inset-0 w-full h-full object-cover"
                     style={{ willChange: "transform", opacity: canvasOpacity }}
                 />
