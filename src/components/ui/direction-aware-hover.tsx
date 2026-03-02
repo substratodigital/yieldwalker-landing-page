@@ -77,7 +77,10 @@ export const DirectionAwareHover = ({
                     exit="exit"
                 >
                     <motion.div
-                        className="group-hover/card:block hidden absolute inset-0 w-full h-full bg-black/40 z-10 transition duration-500"
+                        className="group-hover/card:block md:hidden absolute inset-0 w-full h-full bg-black/40 z-10 block"
+                    />
+                    <motion.div
+                        className="group-hover/card:block hidden md:block absolute inset-0 w-full h-full bg-black/40 z-10 transition duration-500"
                     />
                     <motion.div
                         variants={variants}
@@ -105,7 +108,25 @@ export const DirectionAwareHover = ({
                             ease: "easeOut",
                         }}
                         className={cn(
-                            "text-white absolute bottom-4 left-4 z-40",
+                            "text-white absolute bottom-4 left-4 z-40 block md:group-hover/card:block opacity-100 md:opacity-0 group-hover/card:opacity-100",
+                            childrenClassName
+                        )}
+                        style={{ opacity: 1, transform: "none" }} // overriding for mobile reliability
+                    >
+                        <div className="md:hidden block">
+                            {children}
+                        </div>
+                    </motion.div>
+
+                    {/* Desktop Hover animated text */}
+                    <motion.div
+                        variants={textVariants}
+                        transition={{
+                            duration: 0.5,
+                            ease: "easeOut",
+                        }}
+                        className={cn(
+                            "text-white absolute bottom-4 left-4 z-40 hidden md:block",
                             childrenClassName
                         )}
                     >

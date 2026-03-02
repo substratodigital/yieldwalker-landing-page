@@ -9,13 +9,11 @@ import { DotPattern } from "@/components/ui/dot-pattern";
 // ============================================================
 const TOTAL_FRAMES = 298;
 
-function getFrameSrc(index: number): string {
-    // Garantimos que o índice não passe de TOTAL_FRAMES - 1
+function getFrameSrc(index: number, isMobile: boolean): string {
     const safeIndex = Math.max(0, Math.min(index, TOTAL_FRAMES - 1));
-    // O nome do arquivo no asset disponibilizado começa no 1 até o 298.
-    // Ex: ezgif-frame-001.jpg até ezgif-frame-298.jpg
     const numString = String(safeIndex + 1).padStart(3, "0");
-    return `/assets/hero_animacao/ezgif-frame-${numString}.jpg`;
+    const folder = isMobile ? "hero-mobile" : "hero_animacao";
+    return `/assets/${folder}/ezgif-frame-${numString}.jpg`;
 }
 
 // ============================================================
@@ -46,10 +44,18 @@ const ctaVariants = {
 export function HeroSection() {
     const prefersReducedMotion = useReducedMotion();
     const [isLoaded, setIsLoaded] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
     const imagesRef = useRef<HTMLImageElement[]>([]);
     const canvasRef = useRef<HTMLCanvasElement>(null);
-
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // Verificação Client-Side Responsiva
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
 
     // Hook Framer Motion
     const { scrollYProgress } = useScroll({
@@ -84,7 +90,7 @@ export function HeroSection() {
     // Fade Out global do Canvas para conectar perfeitamente com a Molten Orange
     const canvasOpacity = useTransform(scrollYProgress, [0.85, 0.95], [1, 0]);
 
-    // 1. CARREGAMENTO DOS FRAMES
+    // 1. CARREGAMENTO DOS FRAMES (Re-roda caso o isMobile mude para trocar a array)
     useEffect(() => {
         if (prefersReducedMotion) {
             setIsLoaded(true);
@@ -94,15 +100,11 @@ export function HeroSection() {
         let loadedCount = 0;
         const imgs: HTMLImageElement[] = [];
 
-        // Otimização: vamos carregar os 30 primeiros frames em prioridade 
-        // e pintar o canvas no primeiro deles imediatamente.
-        // Assim o hero não fica "vazio" na primeira renderização sem a pessoa ter rolado.
         for (let i = 0; i < TOTAL_FRAMES; i++) {
             const img = new Image();
-            img.src = getFrameSrc(i);
+            img.src = getFrameSrc(i, isMobile);
             img.onload = () => {
                 loadedCount++;
-                // Ao carregar o quadro 0, já desenha na tela
                 if (i === 0 && canvasRef.current) {
                     renderFrame(0, imgs, canvasRef.current);
                 }
@@ -117,7 +119,7 @@ export function HeroSection() {
         }
 
         imagesRef.current = imgs;
-    }, [prefersReducedMotion]);
+    }, [prefersReducedMotion, isMobile]);
 
     // Função pura para renderizar imagem no canvas
     function renderFrame(index: number, imgs: HTMLImageElement[], canvas: HTMLCanvasElement) {
@@ -170,10 +172,10 @@ export function HeroSection() {
                     style={{ opacity: etapa1Opacity, scale: etapa1Scale, pointerEvents: etapa1Pointer }}
                 >
                     <h1
-                        className="font-black text-white px-4 text-center select-none drop-shadow-2xl font-bold"
+                        className="font-black text-white px-2 md:px-4 text-center select-none drop-shadow-2xl font-bold w-full mx-auto max-w-[95vw] sm:max-w-none"
                         style={{
                             fontFamily: "'Google Sans Flex', system-ui, sans-serif",
-                            fontSize: "clamp(60px, 12vw, 180px)",
+                            fontSize: "clamp(3rem, 13vw, 11rem)",
                             letterSpacing: "-0.04em",
                             lineHeight: 1
                         }}
@@ -191,7 +193,7 @@ export function HeroSection() {
                         <motion.div
                             animate={{ y: [0, 8, 0] }}
                             transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                            className="flex items-center justify-center cursor-pointer hover:brightness-110 transition-all"
+                            className="flex items-center justify-center cursor-pointer hover:brightness-110 transition-all mt-[5vh] md:mt-0"
                         >
                             <img src="/assets/botton-scroll.svg" alt="Scroll Down" className="w-[42px] h-[64px] object-contain drop-shadow-md" />
                         </motion.div>
@@ -297,8 +299,8 @@ export function HeroSection() {
                             </p>
                         </div>
 
-                        {/* Cards de Fricção em Glassmorphism Premium */}
-                        <div className="xl:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                        {/* Cards de Fricção em Glassmorphism Premium C/ Ajuste Mobile P/ Nao cortar */}
+                        <div className="xl:w-2/3 flex flex-row overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 gap-6 w-full pb-8 md:pb-0 px-4 md:px-0">
                             {[
                                 { title: "The Labor Gap", text: "Skilled field labor is increasingly scarce as younger generations migrate toward urban centers." },
                                 { title: "Data Subjectivity", text: "Human assessments are inherently subjective, leading to inconsistent field data and compromised decision-making." },
@@ -308,7 +310,7 @@ export function HeroSection() {
                                     key={i}
                                     whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.6)", scale: 1.02 }}
                                     transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                                    className="bg-[#161616]/60 backdrop-blur-xl border border-white/5 shadow-2xl p-8 rounded-[32px] flex flex-col gap-4"
+                                    className="bg-[#161616]/60 backdrop-blur-xl border border-white/5 shadow-2xl p-6 md:p-8 rounded-[32px] flex flex-col gap-3 md:gap-4 min-w-[85vw] md:min-w-0 snap-center"
                                 >
                                     <div className="w-14 h-14 rounded-full border border-[#FF5532]/30 bg-[#FF5532]/10 flex items-center justify-center mb-2">
                                         <span className="font-mono text-[#FF5532] text-xl font-bold">0{i + 1}</span>
